@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     int player = 1;
 
     // 0 mean the counter has not been clicked
-    int[] gameStates = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int[] gameState = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     // Winning position
     int[][] winningPositions = {{0,1,2}, {3,4,5}, {6,7,8}, {0,3,6}, {1,4,7}, {2,5,8}, {0,4,8}, {2,4,6}};
@@ -42,9 +42,9 @@ public class MainActivity extends AppCompatActivity {
         ImageView counter = (ImageView) view;
         int counterTag = Integer.parseInt(view.getTag().toString());
 
-        if( gameStates[counterTag] == 0 ) {
+        if( gameState[counterTag] == 0 ) {
             counter.setTranslationY(-1000f);
-            gameStates[counterTag] = player;
+            gameState[counterTag] = player;
             this.checkPlayer(counter);
             counter.animate().translationYBy(1000f).setDuration(200);
         } else {
@@ -52,14 +52,32 @@ public class MainActivity extends AppCompatActivity {
         }
 
         for(int[] winningPosition : winningPositions) {
-            if( gameStates[winningPosition[0]] == gameStates[winningPosition[1]] &&
-                    gameStates[winningPosition[1]] == gameStates[winningPosition[2]] &&
-                    gameStates[winningPosition[0]] != 0) {
-                String playerName = (gameStates[winningPosition[0]] == 1 ? "Player Yellow" : "Player Red");
+            if( gameState[winningPosition[0]] == gameState[winningPosition[1]] &&
+                    gameState[winningPosition[1]] == gameState[winningPosition[2]] &&
+                    gameState[winningPosition[0]] != 0) {
+                String playerName = (gameState[winningPosition[0]] == 1 ? "Player Yellow" : "Player Red");
                 this.displayWonMessage(playerName);
                 this.disableAllCounter();
+            } else {
+                // Check if game is over
+                boolean isGameOver = true;
+                for(int countGameState : gameState) {
+                    if(countGameState == 0) { isGameOver = false; }
+                }
+                if( isGameOver ) {
+                    this.displayGameOverMessage();
+                    this.disableAllCounter();
+                }
             }
         }
+    }
+
+    private void displayGameOverMessage() {
+        layoutLinear = (LinearLayout) findViewById(R.id.wonMessageLinearLayout);
+        layoutLinear.setVisibility(View.VISIBLE);
+        wonMessageTextView = (TextView) findViewById(R.id.wonMessageTextView);
+        String message = "Game was drawn, no winner";
+        wonMessageTextView.setText(message);
     }
 
     public void checkPlayer(ImageView c) {
@@ -91,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void playAgainFunction(View view) {
         // Reset the game states
-        for(int i=0; i<gameStates.length; i++) {
-            gameStates[i] = 0;
+        for(int i=0; i<gameState.length; i++) {
+            gameState[i] = 0;
         }
         // Reset the image counter
         GridLayout counterGridLayout = (GridLayout) findViewById(R.id.counterGridLayout);
