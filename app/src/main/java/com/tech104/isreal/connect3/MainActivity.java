@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +26,10 @@ public class MainActivity extends AppCompatActivity {
     // Winning position
     int[][] winningPositions = {{0,1,2}, {3,4,5}, {6,7,8}, {0,3,6}, {1,4,7}, {2,5,8}, {0,4,8}, {2,4,6}};
 
-    // Won message display
+    // Won message display Linear Layout
+    LinearLayout layoutLinear;
+
+    // Wom message display Text
     TextView wonMessageTextView;
 
     @Override
@@ -51,16 +56,8 @@ public class MainActivity extends AppCompatActivity {
                     gameStates[winningPosition[1]] == gameStates[winningPosition[2]] &&
                     gameStates[winningPosition[0]] != 0) {
                 String playerName = (gameStates[winningPosition[0]] == 1 ? "Player Yellow" : "Player Red");
-                wonMessageTextView = (TextView) findViewById(R.id.wonMessageTextView);
-                String message = playerName + " Won the game";
-                wonMessageTextView.setText(message);
-                wonMessageTextView.setVisibility(View.VISIBLE);
-                wonMessageTextView.setScaleX(0.1f);
-                wonMessageTextView.setScaleY(0.1f);
-                wonMessageTextView.animate().scaleX(1).scaleY(1).setDuration(2000);
+                this.displayWonMessage(playerName);
                 this.disableAllCounter();
-                Button playAgainButton = (Button) findViewById(R.id.playAgainButton);
-                playAgainButton.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -84,6 +81,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void displayWonMessage(String p) {
+        layoutLinear = (LinearLayout) findViewById(R.id.wonMessageLinearLayout);
+        layoutLinear.setVisibility(View.VISIBLE);
+        wonMessageTextView = (TextView) findViewById(R.id.wonMessageTextView);
+        String message = p + " Won the game";
+        wonMessageTextView.setText(message);
+    }
+
     public void playAgainFunction(View view) {
         // Reset the game states
         for(int i=0; i<gameStates.length; i++) {
@@ -97,8 +102,8 @@ public class MainActivity extends AppCompatActivity {
             counter.setEnabled(true);
             counter.setImageResource(0);
         }
-        // Reset the won Message
-        wonMessageTextView.setVisibility(View.GONE);
+        // Hide the won Message Linear Layout
+        layoutLinear.setVisibility(View.GONE);
         wonMessageTextView.setText("");
     }
 }
